@@ -7,7 +7,6 @@ import (
 	"os"
 	"runtime"
 	"slices"
-	"strconv"
 )
 
 type entry struct {
@@ -117,7 +116,6 @@ func doPart(r result) {
 	var i int
 	var j int
 	var k int
-	var f float64
 	var temp int
 	var name string
 	var e entry
@@ -134,8 +132,7 @@ func doPart(r result) {
 		if j > k {
 			k = len(r.buffer)
 		}
-		f, _ = strconv.ParseFloat(string(r.buffer[j+1:k]), 32)
-		temp = int(f * 10)
+		temp = customStringToIntParser(r.buffer[j+1 : k])
 		e.count++
 		e.total += temp
 		if temp < e.min {
@@ -148,5 +145,26 @@ func doPart(r result) {
 		i = k + 1
 	}
 	results <- r
+	return
+}
+
+// https://github.com/shraddhaag/1brc/blob/17d575fd0f143aed18d285713d030a5b52b478df/main.go#L231
+func customStringToIntParser(input []byte) (output int) {
+	var isNegativeNumber bool
+	if input[0] == '-' {
+		isNegativeNumber = true
+		input = input[1:]
+	}
+
+	switch len(input) {
+	case 3:
+		output = int(input[0])*10 + int(input[2]) - int('0')*11
+	case 4:
+		output = int(input[0])*100 + int(input[1])*10 + int(input[3]) - (int('0') * 111)
+	}
+
+	if isNegativeNumber {
+		return -output
+	}
 	return
 }
