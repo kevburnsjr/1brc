@@ -31,7 +31,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	c := runtime.NumCPU() / 4
+	c := runtime.NumCPU() / 2
 	run(c, 64*1024*1024, f)
 }
 
